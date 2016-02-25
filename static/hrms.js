@@ -381,3 +381,16 @@ $(document).on('click','#analyzePeak',function(){
 	$('#fragmentsContainerMessages').css({'display':'none'});
 	$('#analyzePeakBox').css({'display':'block'});
 });
+
+window.onload = function(){
+	$.ajax({
+		method:'post',
+		url:'cgi-bin/get_frags.py',
+		success:function(result){
+			frags = JSON.parse(result);
+			for (i=0;i<frags.length;i++){
+				$('#addStop').prepend('<input type="checkbox" class="checkbox" id=\''+frags[i]+'\'>'+frags[i]+'<br>');
+			}
+		}
+	});
+}
