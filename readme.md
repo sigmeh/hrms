@@ -2,9 +2,9 @@ HRMS is a high resolution analytical toolkit for processing data obtained from m
 
 The program (python 2.7) is started by navigating to the main directory in which the files are located and typing `python start_hrms.py`. 
 
-This script checks for an active python localhost server, with the option to kill python server processes not spawned from the current directory. 
+This script checks for an active python localhost server, with the option to kill running processes. 
 If applicable, a new server is started by calling `hrms_server.py`. 
-The server is set to open the `hrms` script in a browser window, which loads `hrms.html` and the accompanying `hrms.js` and `hrms.css` files. 
+The server is set to open `hrms` in a browser window (currently set to firefox), which loads `hrms.html` and the accompanying `hrms.js` and `hrms.css` files. 
 
 CSV files (exported from Thermo Xcalibur software) are placed into the 'data_files' folder directly. 
 
