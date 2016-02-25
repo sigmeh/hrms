@@ -1,16 +1,7 @@
 HRMS is a high resolution analytical toolkit for processing data obtained from mass spectrometry experiments (with current emphasis on ruthenium-based complexes). 
 
-The `hrms` program can be called from the command line with the following invocation: 
-`$ hrms`
+The program (python 2.7) is started by navigating to the main directory in which the files are located and typing `python start_hrms.py`. 
 
-This invokes a bash function located in .bashrc:
-
-	hrms(){
-		cd $HOME/p/hrms
-        python start_hrms.py
-	}
-	
-The working directory is changed to ~/p/hrms and `start_hrms.py` is called. 
 This script checks for an active python localhost server, with the option to kill python server processes not spawned from the current directory. 
 If applicable, a new server is started by calling `hrms_server.py`. 
 The server is set to open the `hrms` script in a browser window, which loads `hrms.html` and the accompanying `hrms.js` and `hrms.css` files. 
