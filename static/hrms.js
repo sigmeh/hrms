@@ -111,14 +111,14 @@ function getCursorPos(e){
 	}
 }
 */
-
+//zooming functionality (start zoom)
 var mouseIsDown = false, zoomx1, zoomy1, drawing = false;
 $(document).on('mousedown','#sheet',function(e){
-	if (e.pageX >=76 && e.pageX <= 774 && e.pageY >= 110 && e.pageY <= 306){
+	if (e.pageX >=76 && e.pageX <= 767 && e.pageY >= 110 && e.pageY <= 306){	//mouse is within zoom window
 		mouseIsDown = true;		
-		zoomx1 = e.pageX;
-		zoomy1 = e.pageY-70;
-		var newZoom = document.createElement('div');
+		zoomx1 = e.pageX;											//origin x zoom
+		zoomy1 = e.pageY-70;										//origin y zoom
+		var newZoom = document.createElement('div');				//create zoom window
 		newZoom.className = 'newZoom';
 		newZoom.setAttribute('id','newZoom');
 		newZoom.style.marginTop = zoomy1+'px';
@@ -128,45 +128,45 @@ $(document).on('mousedown','#sheet',function(e){
 	
 });
 //draw zoom (mousemove on sheet)
-$(document).on('mousemove','#sheet',function(e){
-	if (mouseIsDown){
+$(document).on('mousemove','#sheet',function(e){					// while mouse is moving across zoom sheet 
+	if (mouseIsDown){												// and the mouse is still down
 		drawing = true;	
-		if (e.pageX >=76 && e.pageX <= 774 && e.pageY >= 110 && e.pageY <= 306){
+		if (e.pageX >=76 && e.pageX <= 767 && e.pageY >= 110 && e.pageY <= 306){	//within zoom window
 			$('#newZoom').css({
-				'width':Math.abs(e.pageX-zoomx1)+'px',
-				'height':Math.abs(e.pageY-zoomy1)-70+'px'
+				'width':Math.abs(e.pageX-zoomx1)+'px',								//get zoom width
+				'height':Math.abs(e.pageY-zoomy1)-70+'px'							//get zoom height
 			});
 		}
-		if (e.pageX < zoomx1){
-			if (e.pageX < 76){
-				$('#newZoom').css({'margin-left':76+'px'});
+		if (e.pageX < zoomx1){										//if zooming to the left of zoom (click) origin
+			if (e.pageX < 76){										//if cursor is outside zoom window
+				$('#newZoom').css({'margin-left':76+'px'});			//set zoom to minimum x value of zoom window
 			}
-			else{
-				$('#newZoom').css({
+			else{							
+				$('#newZoom').css({									//zooming to the left; change margin-left to cursor position
 					'margin-left':e.pageX+'px',
 					'width':zoomx1-e.pageX+'px'
 				});
 			}
 		}
-		if (e.pageY -70 < zoomy1){
-			if (e.pageY < 110){
-				$('#newZoom').css({
+		if (e.pageY -70 < zoomy1){									//cursor position is above zoom origin (y axis)
+			if (e.pageY < 110){										//if cursor is above zoom window
+				$('#newZoom').css({									//set zoom box to top of zoom window
 					'margin-top':40+'px',
 					'height':zoomy1-40+'px'
 				});
 			}
-			else{
+			else{													//otherwise set new margin-top to cursor position
 				$('#newZoom').css({
 					'margin-top':e.pageY-70+'px',
 					'height':zoomy1-(e.pageY-70)+'px'
 				});
 			}
 		}
-		if (e.pageX > 767){
-			$('#newZoom').css({'width':767-zoomx1+'px'});
+		if (e.pageX > 767){											//if cursor is to the right of the zoom window
+			$('#newZoom').css({'width':767-zoomx1+'px'});			//set to maximum x zoom
 		}
-		if (e.pageY > 306){
-			$('#newZoom').css({'height':306-zoomy1-70+'px'});
+		if (e.pageY > 306){											//if cursor is below zoom window
+			$('#newZoom').css({'height':306-zoomy1-70+'px'});		//set to maximum y zoom (i.e., bottom of spectrum)
 		}
 				
 	}
@@ -176,37 +176,37 @@ function limitAdjust(num){
 }
 var figCount = 0;
 //mouseup (on sheet) -- send new zoom to show.py
-$(document).on('mouseup',function(){
+$(document).on('mouseup',function(){										//on mouse up
 	mouseIsDown = false;
 	figCount++;		
-	if (drawing){
+	if (drawing){															//if drawing (zoom)
 		drawing = false;
-		var xminNew = parseInt($('#newZoom').css('margin-left'))-76;
+		var xminNew = parseInt($('#newZoom').css('margin-left'))-76;		//convert zoom DOM values to conventional plotting coordinates
 		var xmaxNew = parseInt($('#newZoom').css('width'))+xminNew;
 		var yminNew = 198 - (parseInt($('#newZoom').css('margin-top'))-40)-parseInt($('#newZoom').css('height'));
 		var ymaxNew = 198+40-(parseInt($('#newZoom').css('margin-top')));	
 		if (yminNew<5){
 			yminNew = 0
 		}
-		xminNew = limitAdjust(xminNew*(xmax-xmin)/690+xmin);
-		xmaxNew = limitAdjust(xmaxNew*(xmax-xmin)/690+xmin);
-		yminNew = limitAdjust(yminNew*(ymax-ymin)/198+ymin);
-		ymaxNew = limitAdjust(ymaxNew*(ymax-ymin)/198+ymin);
-		spectralData[0] = String($('#filename').val());
+		xminNew = limitAdjust(xminNew*(xmax-xmin)/690+xmin);				//adjust to three decimal places and scale to appropriate data interval
+		xmaxNew = limitAdjust(xmaxNew*(xmax-xmin)/690+xmin);				//	""
+		yminNew = limitAdjust(yminNew*(ymax-ymin)/198+ymin);				//	""
+		ymaxNew = limitAdjust(ymaxNew*(ymax-ymin)/198+ymin);				//	""
+		spectralData[0] = String($('#filename').val());						// update spectralData with new information 
 		spectralData[1] = xminNew;
 		spectralData[2] = xmaxNew;
 		spectralData[3] = yminNew;
 		spectralData[4] = ymaxNew;
 		$.ajax({
 			method:'post',
-			url:'cgi-bin/show.py',
+			url:'cgi-bin/show.py',											//send new zoom parameters to show.py for processing
 			data:{'spectralData':JSON.stringify(spectralData)},
 			success:function(result){
-				$('#newZoom').remove();
-				$('#messageBox').html('');
-				spectralData = JSON.parse(result);			
+				$('#newZoom').remove();											//remove zoom box
+				$('#messageBox').html('');										//reset messages
+				spectralData = JSON.parse(result);								//parse incoming data
 				$('#newFig').attr('src',spectralData[0]+'?var='+figCount);		//prevent old fig cache
-				appendSpectralData(spectralData);
+				appendSpectralData(spectralData);								//add new data to DOM
 				decompileData(spectralData);
 			}
 		});
@@ -279,7 +279,7 @@ $(document).on('click','#findRu',function(){								//invoke findRu.py to search
 	});
 });
 //view Candidates (from findRu function)
-$(document).on('click','#viewCandidates',function(){
+$(document).on('click','#viewCandidates',function(){						//view Ru candidates from findRu in new window
  	var name = $('#filename').val();
  	name = name.substring(0,name.length-4);
 	var newWindow = window.open("","_blank");
@@ -291,7 +291,8 @@ $(document).on('click','#fraglist div',function(){
 }).on('click','#fragClear',function(){
 	$('#fraglist').html('');
 //fragment					(analyze)
-}).on('click','#analyze',function(){				//analyze function for multi-peak auto-finder (original findRu results ported here)
+}).on('click','#analyze',function(){							//analyze function for multi-peak auto-finder (original findRu results ported here)
+	/*															//currently disabled
 	var checkboxes = document.getElementsByClassName('checkbox');		
 	var checkFragments = [];									//get list of fragments to check
 	for (i = 0; i < checkboxes.length; i++){
@@ -315,6 +316,7 @@ $(document).on('click','#fraglist div',function(){
 		append('output length: ' + output.length);			
 		append(output.substring(candidate,end));
 	});
+	*/
 }).on('click','#fragMessageClear',function(){
 	$('#fragmentsMessages').val('');
 });
@@ -342,36 +344,22 @@ function appendFrag(data){
 	$('#fragmentsMessages').val(data);
 }
 
-function append(data){								//append new data to messageBox
+function append(data){													//append new data to messageBox
 	message = data + '<br>';
 	$('#messageBox').append(message);
 }
 
-$(document).on('click','#addNewFrag',function(){
-	//$('#addStop').prepend('<input type=\'checkbox\' class=\'checkbox\' id=\''+$('#newFragName').val()+'\'>'+$('#newFragName').val()+'<br>');
-/*
-	var newFragInput = document.createElement('input');
-	newFragInput.type = 'checkbox';
-	newFragInput.className = 'checkbox';
-	newFragInput.id = $('#newFragName').val();
-	console.log($('#newFragName').val());
-	//$('#'+newFragInput.id).html(String(newFragName));
-	$('#addNewFragBox').insertBefore(newFragInput+newFragInput.id+'<br>');
-*/
-});
-
-$(document).on('click','#addNewFrag',function(){	//add user-generated fragment to list
+$(document).on('click','#addNewFrag',function(){						//add user-generated fragment to list
 	$.ajax({
 		method:'post',
-		url:'cgi-bin/add_frag.py',
-		data:{'formula':JSON.stringify([$('#newFragName').val(),$('#newFragFormula').val()])},
+		url:'cgi-bin/add_frag.py',										//call add_frag.py
+		data:{'formula':JSON.stringify([$('#newFragName').val(),$('#newFragFormula').val()])},	//send name and formula
 		success:function(result){
 			if (result == 'error'){
-				$('#messageBox').append('Errors found in formula.');
+				$('#messageBox').append('Errors found in formula.');	//error handling
 			}
-			else{
+			else{														//add new fragment checkbox to DOM
 				$('#addStop').append('<input type=\'checkbox\' class=\'checkbox\' id=\''+$('#newFragName').val()+'\'>'+$('#newFragName').val()+'<br>');
-				//$('#addNewFragBox').prepend('<input type=\'checkbox\' class=\'checkbox\' id=\''+$('#newFragName').val()+'\'>'+$('#newFragName').val()+'<br>');
 			}
 		}
 	});
@@ -386,11 +374,11 @@ $(document).on('click','#analyzePeak',function(){
 window.onload = function(){
 	$.ajax({
 		method:'post',
-		url:'cgi-bin/get_frags.py',
+		url:'cgi-bin/get_frags.py',										// get fragments from ref/fragments.txt and add to DOM (on window load)
 		success:function(result){
 			frags = JSON.parse(result);
 			for (i=0;i<frags.length;i++){
-				$('#addStop').prepend('<input type="checkbox" class="checkbox" id=\''+frags[i]+'\'>'+frags[i]+'<br>');
+				$('#addStop').prepend('<input type="checkbox" class="checkbox" id=\''+frags[i]+'\'>'+frags[i]+'<br>');	//add each fragment
 			}
 		}
 	});
