@@ -87,30 +87,6 @@ $(document).on('click','#show',function(){
 		});
 
 });
-/*
-$(document).on('mousedown','#sheet',function(e){
-	var zoom = getCursorPos(e);
-	mouseIsDown = true;
-	drawZoom(e,true);
-	$('#sheet').mousemove(function(e){
-		if (mouseIsDown){
-			var endzoom = getCursorPos(e);
-			drawZoom(e,false);
-		}
-	});
-});
-function getCursorPos(e){
-	if (e.pageX > 79 && e.pageX < 773 && e.pageY > 111 && e.pageY < 309){
-		cursorX = e.pageX;
-		cursorXadj = cursorX - 80;
-		cursorY = e.pageY;
-		cursorY = 309 - cursorY;
-		cursorPos = cursorXadj + ', ' + cursorY;
-		$('#cursor').html(cursorPos);
-		return [cursorXadj,cursorY];
-	}
-}
-*/
 //zooming functionality (start zoom)
 var mouseIsDown = false, zoomx1, zoomy1, drawing = false;
 $(document).on('mousedown','#sheet',function(e){
