@@ -370,7 +370,8 @@ $(document).on('click','#addNewFrag',function(){	//add user-generated fragment t
 				$('#messageBox').append('Errors found in formula.');
 			}
 			else{
-				$('#addStop').prepend('<input type=\'checkbox\' class=\'checkbox\' id=\''+$('#newFragName').val()+'\'>'+$('#newFragName').val()+'<br>');
+				$('#addStop').append('<input type=\'checkbox\' class=\'checkbox\' id=\''+$('#newFragName').val()+'\'>'+$('#newFragName').val()+'<br>');
+				//$('#addNewFragBox').prepend('<input type=\'checkbox\' class=\'checkbox\' id=\''+$('#newFragName').val()+'\'>'+$('#newFragName').val()+'<br>');
 			}
 		}
 	});
