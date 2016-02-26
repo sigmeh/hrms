@@ -1,0 +1,8 @@
+#!/usr/bin/env python
+def main():
+	with open('static/hrms.css','r') as f:
+		css = f.read()
+	print 'Content-type: text/css\n'
+	print css
+if __name__ == '__main__':
+	main()

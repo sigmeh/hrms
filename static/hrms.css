@@ -1,0 +1,377 @@
+#title{	
+	
+	
+	text-align:center;
+	font-size:16px;
+	
+	/*
+	border-style:solid;
+	border-color:black;
+	border-width:1px;
+	*/
+	padding:0px;
+}
+#container{
+	/*
+	position:fixed;
+	*/
+	position:fixed;
+
+}
+#optionsContainer{
+	position:absolute;
+	margin:5px;
+	width:900px;
+}
+#fileBox{
+	/*
+	border-style:solid;
+	border-color:black;
+	border-width:1px;
+	*/
+	padding:0px;
+}
+#file{
+	font-size:13px;
+	vertical-align:top;
+	margin-top:2px;
+	/*
+	border-style:solid;
+	border-color:black;
+	border-width:1px;
+	*/
+}
+#filename{
+	resize:none;
+	height:17px;	
+	width:200px;
+}
+#filesButton{
+	position:absolute;
+	font-size:10px;
+	border-style:solid;
+	border-color:black;
+	border-width:1px;
+	border-radius:5px;
+	padding-top:3px;
+	padding-bottom:1px;
+	padding-left:4px;
+	padding-right:4px;
+	margin:1px;
+	margin-top:0px;
+	margin-left:3px;
+	background-color:rgb(228,245,255);
+	font-family:helvetica;
+}
+#filesButton:hover{
+	cursor:pointer;
+}
+#fileList{
+	display:none;
+	position:absolute;
+	margin-left:193px;
+	margin-top:2px;
+	/*
+	height:20px;
+	width:20px;
+	*/
+	z-index:10;
+	border-color:black;
+	border-style:solid;
+	border-width:1px;
+	border-radius:5px;
+	background-color:white;
+	font-family:helvetica;
+	font-size:12px;
+	z-index:200;
+	padding:2px;
+	
+}
+.file{
+	
+}
+.file:hover{
+	background-color:rgb(255,255,160);
+	cursor:pointer;
+}
+button{
+	cursor:pointer;
+}
+#fragMessageClear{
+	margin-top:782px;
+	margin-left:750px;
+	position:fixed;
+}
+#fragmentsMessages{
+	margin-top: 370px;
+	margin-left:745px;
+	position:fixed;
+	font-size:12px;
+	resize:none;
+	width:400px;
+	height: 410px;
+}
+#messages{
+	margin-left:5px;
+	margin-top:360px;
+	position:fixed;
+	font-size:12px;
+}
+#messageBox{
+	margin-top: 380px;
+	margin-left:5px;
+	position:fixed;
+	font-size:12px;
+}
+.fragButtons{
+	display:none;
+}
+#analyze{
+	margin-left:80px;
+	margin-top:24px;
+}
+#fragClear{
+	
+}
+#fraglistTitle{
+	margin-left:80px;
+
+}
+.selected{
+	background-color:rgb(209,255,242);
+}
+#fraglist{
+	position:absolute;
+	margin-left:80px;
+	margin-top:2px;
+	height:300px;
+	width:120px;
+	border-style:solid;
+	border-color:black;
+	border-width:1px;
+	overflow-y:scroll;
+	padding:2px;	
+}
+#fragArrayPos{
+	resize:none;
+	width:20px;
+	height:16px;
+	vertical-align:top;
+}
+.checkbox{
+	margin:2px;
+}
+#enterFragment{
+	vertical-align:top;
+	margin-left:2px;
+}
+#fragmentsContainer{
+	height:400px;
+	width:280px;
+	padding:4px;
+	border-style:solid;
+	border-color:black;
+	border-width:1px;
+	position:fixed;
+	margin-top:370px;
+	margin-left:450px;
+	font-size:12px;
+	
+	display:none;
+	
+}
+#fragmentsContainerMessages{
+	
+	display:none;
+	
+}
+#viewCandidates{
+	z-index:400;
+	font-size:15px;
+	position:fixed;
+	margin-top:380px;
+	margin-left:756px;
+	border-style:solid;
+	border-color:black;
+	border-radius:5px;
+	border-width:1px;
+	padding:3px;
+	background-color:rgb(228,245,255);
+	cursor:pointer;
+}
+#viewCandidates:hover{
+	background-color:rgb(205,235,230);
+}
+.fragmentText{
+	resize:none;
+	height:20px;
+	margin-left:2px;
+	margin-top:2px;
+	vertical-align:bottom;
+	width:100px;
+}
+#thresholdpointer{
+	font-size:11px;
+}
+#threshold{
+	resize:none;
+	height:16px;
+	width:30px;
+	vertical-align:bottom;
+	margin-bottom:3px;
+}
+#diagram{		
+}
+
+
+body{
+
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: -moz-none;
+	-o-user-select: none;
+	user-select: none;
+	
+}
+#predicted{
+	margin-top:30px;
+	margin-left:840px;	
+	width:400px;
+	position:fixed;
+}
+#Ru2esp2SbF6{
+	margin-top:40px;
+	margin-left:1260px;
+	height:100px;
+	width:100px;
+	position:fixed;
+}	
+body{
+}
+img{
+}
+	
+*{
+	margin:0px;
+}	
+button{
+	margin-top:5px;
+	position:relative;
+}
+#show{
+}
+#clear{			
+}
+
+#cursor{	
+	margin-top:360px;
+	position:fixed;
+}	
+#spectrumContainer{
+	position:fixed;
+	margin-top:50px;
+	margin-left:2px;
+}
+#sheet{
+	height:300px;
+	width:800px;
+	display:none;
+	z-index:100;
+	position:absolute;
+	margin:1px;
+}
+#spectrum{
+	z-index:10;
+	position:relative;
+	height:300px;
+	width:800px;
+	border-style:solid;
+	border-color:black;
+	border-width:1px;	
+}
+#xlabel{
+	margin:0px;
+	text-align:center;
+	width:1000px;
+}
+#ylabel{
+	display:inline-block;
+	vertical-align:top;
+	margin-top:90px;
+}
+.feedback{
+	font-size:12px;
+}
+#arrowsbox{
+	position:fixed;
+	display:inline-block;
+	margin-left:810px;
+	margin-top:150px;
+}
+#arrow-up {
+	width: 0; 
+	height: 0; 
+	border-left: 10px solid transparent;
+	border-right: 10px solid transparent;
+	border-bottom: 40px solid green;
+}
+#arrow-down {
+	width: 0; 
+	height: 0; 
+	border-left: 10px solid transparent;
+	border-right: 10px solid transparent;
+	border-top: 40px solid #f00;		
+}
+.newZoom{
+	z-index:300;
+	/*
+	height:20px;
+	width:20px;
+	*/
+	border-style:solid;
+	border-color:black;
+	border-width:1px;
+	position:fixed;
+}
+#fraglist div{
+	cursor:pointer;
+}
+#analyzePeakBox{
+
+	width:280px;
+	padding:4px;
+	border-style:solid;
+	border-color:black;
+	border-width:1px;
+	position:fixed;
+	margin-top:370px;
+	margin-left:450px;
+	font-size:12px;
+}
+.newFrag{
+	resize:none;
+	height:18px;
+	width:200px;
+	font-family:arial;
+	font-size:12px;
+}
+#newFragName{
+	width:70px;
+	margin-left:14px;
+}
+#newFragFormula{
+	margin-left:2px;
+}
+#addNewFragBox{
+	border-style:solid;
+	border-color:black;
+	border-width:1px;
+	border-radius:5px;
+	padding:4px;
+	margin-top:3px;
+}
+#frag_eg{
+	vertical-align:top;
+	margin-left:110px;
+	font-family:arial;
+}

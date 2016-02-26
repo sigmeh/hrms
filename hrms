@@ -1,0 +1,5 @@
+#!/usr/bin/env python
+with open('hrms.html','r') as f:
+	hrms = f.read()
+print 'Content-type: text/html\n'
+print hrms

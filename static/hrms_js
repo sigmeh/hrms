@@ -1,0 +1,8 @@
+#!/usr/bin/env python
+def main():
+	with open('static/hrms.js','r') as f:
+		js = f.read()
+	print 'Content-type: text/javascript\n'
+	print js
+if __name__ == '__main__':
+	main()
