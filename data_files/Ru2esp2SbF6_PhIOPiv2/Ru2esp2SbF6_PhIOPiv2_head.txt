@@ -1,0 +1,1 @@
+SPECTRUM - MS,[Ru2esp2]SbF610-3_PhI(OPiv)2_5kV.RAW,FTMS + p ESI Full ms [100.00-2000.00],Scan #: 22-32,RT: 0.40-0.58,AV: 11,SB: 18  0.03-0.33 ,Data points: 28120,Mass,Intensity
