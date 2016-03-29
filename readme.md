@@ -1,5 +1,7 @@
 HRMS is a high resolution analytical toolkit for processing data obtained from mass spectrometry experiments (with current emphasis on ruthenium-based complexes). 
 
+![hrms sample image](https://github.com/markedwinharvey/hrms/blob/master/media/hrms.sample.image.png)
+
 The program (python 2.7) is started by navigating to the main directory in which the files are located and typing `python start_hrms.py`. 
 
 This script checks for an active python localhost server, with the option to kill running processes. 
