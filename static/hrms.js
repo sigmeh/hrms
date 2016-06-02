@@ -35,7 +35,7 @@ $(document).on('click','#filesButton',function(){		//toggle file list on filesBu
 //file click
 $(document).on('click','.file',function(){				//select new file from list
 	var filename = $(this).html();
-	$('#filename').html(filename);				//show file name
+	$('#filename').val(filename);				//show file name
 	$('#fileList').css({'display':'none'});				//close file list
 	showingFileList = false;
 	if (lastFile != filename){
@@ -45,6 +45,7 @@ $(document).on('click','.file',function(){				//select new file from list
 		$('#messageBox').html('');												//
 		$('#newFig').remove();													//remove old spectrum
 		$('#spectrum').append('<img id="newFig"/>');							//reset spectrum
+		showingData = false;
 	}
 	
 	lastFile = filename;
@@ -70,14 +71,13 @@ $(document).on('click','#show',function(){
 			method: 'post',
 			url: 'cgi-bin/show.py',										
 			data: {'spectralData':JSON.stringify(spectralData)}		//json-encode spectralData to send to show.py
-		}).done(function(result){
-			showingData = true;			
+		}).done(function(result){			
 			if (result.substring(0,4) == 'File'){					//error handling: Folder not found
 				result = $('#filename').val() + ': ' + result;
 				append(result);
-			}	
-			
+			}				
 			else{													//file was found and spectrum returned
+				showingData = true;	
 				spectralData = JSON.parse(result);					//redefine spectralData in callback
 				decompileData(spectralData);
 				appendSpectralData(spectralData);	
@@ -342,9 +342,34 @@ $(document).on('click','#addNewFrag',function(){						//add user-generated fragm
 });
 
 $(document).on('click','#analyzePeak',function(){
-	$('#fragmentsContainer').css({'display':'none'});
-	$('#fragmentsContainerMessages').css({'display':'none'});
-	$('#analyzePeakBox').css({'display':'block'});
+	if (showingData){
+		$('#fragmentsContainer').css({'display':'none'});
+		$('#fragmentsContainerMessages').css({'display':'none'});
+		$('#analyzePeakBox').css({'display':'block'});
+		var filename = $('#filename').val();
+		spectralData[0] = filename;
+		frag_selections = $('.analyzePeakCheck');
+		var check_frags = [];									//list of fragments to analyze
+		for (i=0;i<frag_selections.length;i++){
+			if(frag_selections[i].checked){
+				check_frags.push(frag_selections[i].id);
+			}
+		}
+		
+		$.ajax({
+			method:'post',
+			url:'./cgi-bin/analyze_peak.py',
+			data:{'package':JSON.stringify([spectralData,check_frags])},
+			success:function(result){
+				if (result == 'error'){
+					append('There was an error in the request.');
+				}
+				else{
+					console.log(result);
+				}
+			}
+		});
+	}
 });
 
 window.onload = function(){
@@ -354,7 +379,7 @@ window.onload = function(){
 		success:function(result){
 			frags = JSON.parse(result);
 			for (i=0;i<frags.length;i++){
-				$('#addStop').prepend('<input type="checkbox" class="checkbox" id=\''+frags[i]+'\'>'+frags[i]+'<br>');	//add each fragment
+				$('#addStop').prepend('<input type="checkbox" class="checkbox analyzePeakCheck" id=\''+frags[i]+'\'>'+frags[i]+'<br>');	//add each fragment
 			}
 		}
 	});

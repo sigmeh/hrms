@@ -5,7 +5,7 @@ def main():
 	server=BaseHTTPServer.HTTPServer
 	handler=CGIHTTPServer.CGIHTTPRequestHandler
 	server_address=("", 8000)
-	handler.cgi_directories=["/",'/cgi-bin','/static']
+	handler.cgi_directories=['/','/cgi-bin']
 	httpd=server(server_address, handler)
 	httpd.serve_forever()
 if __name__ == '__main__':

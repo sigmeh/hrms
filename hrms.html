@@ -1,15 +1,17 @@
 <head>
 	<meta content-type='http-equiv' content='text/html; charset=utf-8'></meta>
 	<title>HRMS - High Resolution Mass Spec Analysis Tools</title>
-	<link rel='stylesheet' type='text/css' href='static/hrms_css'></link>
+	<script type='text/javascript' src='http://localhost:8000/static/jquery2.1.3.js'></script>
+	<link rel='stylesheet' type='text/css' href='http://localhost:8000/static/hrms.css'></link>
 	<!--<script type='text/javascript' src='https://code.jquery.com/jquery-2.1.3.js'></script>-->
-	<script type='text/javascript' src='static/hrms_jquery'></script>
-	<script type='text/javascript' src='static/hrms_js'></script>
+	
+	<script type='text/javascript' src='http://localhost:8000/static/hrms.js'></script>
 </head>
 <body>	
 	<div id='title'><u><b>HRMS - High Resolution Mass Spec Analysis Tools</b></u></div>
 	<div id='container'>
 		
+		<!--options container-->
 		<div id='optionsContainer'>												
 			<div id='fileBox'>
 				<span id='file'>File: </span>
@@ -24,17 +26,26 @@
 			<button id='findRu'>Find Ru</button>
 			<span id='thresholdpointer'>Threshold: </span><textarea id='threshold'>20</textarea>
 		</div>
+		<!--end options container-->
+		
+		
+		<!--spectrum-->
 		<div id='spectrumContainer'>								<!--spectrum container-->	
 			<div id='sheet'></div>									<!--zoom functionality drawn over sheet-->	
 			<div id='spectrum'>
 				<img id='newFig'/>
 			</div>
 		</div>
+		<!--end spectrum-->
 	</div>
+	
 	<div id='messages'><u>Messages</u></div>		
 	<div id='messageBox'></div>						<!--track messages associated with DOM manipulations and python processing-->
 	<img id='Ru2esp2SbF6' src='./other/Ru2esp2SbF6.png'/>
 	<img id='predicted' src='./other/Ru2isotopes.png'/>
+	
+	
+	<!--fragments container-->
 	<div id='fragmentsContainer'><u>Fragments</u><br>	<!--Ruthenium auto-detector peak analysis box-->
 		<div id='fraglistTitle'>Ru Candidates:</div>
 		<div id='fraglist'></div>
@@ -59,6 +70,8 @@
 		<button id='analyze' class='fragButtons'>Analyze</button>
 		<button id='fragClear' class='fragButtons'>Clear</button>
 	</div>
+	<!--end fragments container-->
+	
 	
 	<div id='fragmentsContainerMessages'>	<!--message box for auto-detected ruthenium peak analysis-->
 		<div id='viewCandidates'><b>View Ruthenium Candidates</b></div>
@@ -72,30 +85,10 @@
 		<div id='arrow-down' class='arrow'></div>
 	</div>
 	
-	<div id='analyzePeakBox'><u>Analyze Peak</u><br><br>
 	
-	<!--
-		<input type='checkbox' class='checkbox' id='Ru' checked>Ru<br>
-		<input type='checkbox' class='checkbox' id='OPiv' checked>OPiv<br>
-		<input type='checkbox' class='checkbox' id='HOPiv'>HOPiv<br>
-		<input type='checkbox' class='checkbox' id='PhIOPiv2'>PhIOPiv2<br>
-		<input type='checkbox' class='checkbox' id='Na'>Na<br>
-		<input type='checkbox' class='checkbox' id='H2O'>H2O<br>
-		<input type='checkbox' class='checkbox' id='O'>O<br>
-		<input type='checkbox' class='checkbox' id='H'>H<br>
-		<input type='checkbox' class='checkbox' id='OH'>OH<br>	
-	-->
-		<!--
-		<input type='checkbox' class='checkbox' id='TcesNH2'>TcesNH2<br>
-		<input type='checkbox' class='checkbox' id='TcesNH'>TcesNH<br>
-		<input type='checkbox' class='checkbox' id='TcesN'>TcesN<br>
-		<input type='checkbox' class='checkbox' id='OAc'>OAc<br>
-		<input type='checkbox' class='checkbox' id='HOAc'>HOAc<br>
-		<input type='checkbox' class='checkbox' id='esp'>esp<br>
-		<input type='checkbox' class='checkbox' id='espH'>espH<br>
-		<input type='checkbox' class='checkbox' id='espH2'>espH2<br>
-		<input type='checkbox' class='checkbox' id='Cl'>Cl<br>
-		-->
+	<!--analyze peak box-->
+	<div id='analyzePeakBox'><u>Analyze Peak</u><br><br>
+
 		<div id='addStop'></div>	<!--add_frag.py prepend location div-->
 		<div id='addNewFragBox'>	<!--add frag box (Name + Formula)-->
 			New fragment:<br>
@@ -104,6 +97,5 @@
 			<button id='addNewFrag'>Add</button><span id='frag_eg'>e.g. C 16 H 20 O 4</span>
 		</div>
 	</div>
-	<style>	
-	</style>
+	<!--end analyze peak box-->
 </body>

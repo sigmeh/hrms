@@ -2,180 +2,219 @@
 # Find candidates for ruthenium-containing species in data set
 
 import matplotlib; matplotlib.use('Agg') 
-import numpy as np; import pylab as pl; print
+import pylab as pl
 from pylab import rcParams
 import cgi,json,os,sys,copy
 rcParams['figure.figsize'] = 28,22
-def save(saveName, saveContents):						#save function
-	saveName = './data_files/'+path + '/' + saveName
-	saveFile = ''
-	for i in range(len(saveContents)):
-		saveFile += str(saveContents[i]) + ' '
-	open(saveName, 'w').write(saveFile)
+print
 
-#start script here
-data = cgi.FieldStorage()['package'].value				#retrieve json-encoded information request
-data = json.loads(data)
-filename = data[0]
-threshold = data[1]
-if not os.path.exists('./data_files/'+filename):		#handle filenames that don't exist
-	print 'File not formatted or file does not exist'
-path = filename.split('.')[0]							#derive filename to retrieve formatted data
-datapath = './data_files/'+path + '/' + path + '_data.csv'
-with open(datapath,'r') as f:
-	data = f.read()
-dataArray = data.split('\n')
-points = []
-for i in range(0,len(dataArray)-1):						#add number pairs to array points[]
-	point = dataArray[i].split(',')
-	points.append([ float(point[0]),float(point[1]) ]) 
+#--------save function
+def save(save_name, path, save_contents):						
+	save_name = './data_files/'+path + '/' + save_name
+	#DATA NOW JSON-ENCODED FOR QUICK RETRIEVAL AND RETURN OF PREVIOUSLY-PROCESSED DATA
+					#save_file = ''
+					#for i in range(len(save_contents)):
+					#	save_file += str(save_contents[i]) + ' '
+					#open(save_name, 'w').write(save_file)
+	with open(save_name,'w') as f:
+		json.dump(save_contents,f)
+#--------end save 
 
-peaks = [] 												#collected peak data (all peaks)
-peak = []												#temp data for each peak, added to peaks
-onPeak = False											
-if points[0][1] > 0:									#starting point has intensity > 0
-	onPeak = True
-else:													#starting point has intensity = 0
-	onPeak = False
-for i in range(len(points)):
-	if points[i][1] > 0:								#add point to peak[] if it has intensity
-		onPeak = True									#currently on peak
-		peak.append(points[i])							#add current point to current peak
-	else:
-		if (onPeak):									#arrived at first zero after peak
-			peaks.append(peak)							#add new (complete) peak to peaks[]
-			onPeak = False
-		peak = []										#reset temp peak holder
+#--------main function
+def main():
+	#--------load user data and retrieve appropriate file if pre-formatted
+	data = cgi.FieldStorage()['package'].value				
+	data = json.loads(data)
+	filename = data[0]
+	threshold = data[1]
+	if not os.path.exists('./data_files/'+filename):		#handle filenames that don't exist
+		print 'File not formatted or file does not exist'; return
+	path = filename.split('.')[0]							#derive filename to retrieve formatted data
+	
+	
+		#--------check for previous data render and return without further processing
+	previous_render = './data_files/'+path + '/' + 'ru_list.txt'
+	if os.path.exists(previous_render):
+		try:
+			with open(previous_render,'r') as f:
+				ru_list = json.load(f)
+			print ru_list
+			return		
+		except:
+			pass	
+		#--------end check for previous data render
+	
+	datapath = './data_files/'+path + '/' + path + '_data.csv'
+	with open(datapath,'r') as f:
+		data = f.read()
+	data_array = data.split('\n')
+	points = []
+	for i in range(0,len(data_array)-1):						#load raw csv data into points list
+		point = data_array[i].split(',')
+		points.append([ float(point[0]),float(point[1]) ]) 
+	#--------end load data
 
-save('peaks.txt',peaks)									#save peaks data through save function
-														#peaks data is list of peak lists with all zero intensity data removed
 
-maxPeaks = []											#create array of peak maxima (one point for each peak)
-for i in range(len(peaks)):								#iterate over all peaks
-	max = [0,0]
-	for j in range(len(peaks[i])):						#iterate over accumulated points within each peak
-		if float(peaks[i][j][1]) > max[1]:
-			max = peaks[i][j]							#record maximum intensity point within each peak
-	maxPeaks.append(max)								#add maximum intensity for each peak to maxPeaks[]
-maxPeakSort = sorted(maxPeaks, key=lambda intensity: intensity[1])
-maxPeakSort.reverse()									#sort by intensity
-save('maxPeaks.txt',maxPeaks)							#save maxPeaks data
+	#--------format peak data
+			#iterate over `points` list and generate `peaks` list, excising intermediate zero-intensity data
+	peaks = [] 												#collected peak data (all peaks)
+	peak = []												#temp data for each peak, added to peaks
+	on_peak = False											
+	if points[0][1] > 0:									#starting point has intensity > 0
+		on_peak = True
+	else:													#starting point has intensity = 0
+		on_peak = False
+	for i in range(len(points)):
+		if points[i][1] > 0:								#add point to peak[] if it has intensity
+			on_peak = True									#currently on peak
+			peak.append(points[i])							#add current point to current peak
+		else:
+			if (on_peak):									#arrived at first zero after peak
+				peaks.append(peak)							#add new (complete) peak to peaks[]
+				on_peak = False
+			peak = []										#reset temp peak holder
 
-def checkPeak(origin, newLimit, direction):				#check all available peaks within range for suitable displacement
-	for i in range(origin, newLimit, direction):
-		val = abs(maxPeaksTrunc[i][0] - maxPeaksTrunc[origin][0])
-		if val > .99 and val < 1.01:					#if suitably displaced, 
-			return i									#return index value of relevant point
-	return False										#return False if no relevant point is found
+	save('peaks.txt',path,peaks)							#save peaks data through save function
+	#--------end format peak data
 
-def checkNearbyPeaks(loc):								#check for cluster of five peaks around current most intense peak (from truncating list)
-	candidateLines = [maxPeaksTrunc[loc]]				#create list candidateLines with first data point
-	positions = [loc]
-	num = loc
-	for i in range(loc, len(maxPeaksTrunc)):			#determine effective range of peaks to test 
-		if maxPeaksTrunc[i][0] - maxPeaksTrunc[loc][0] > 1.01:	#exclude data points outside this range
-			num = i
-			break
-	newLimit = checkPeak(loc,num,1)
-	if newLimit:										#found relevant new point
-		candidateLines.append(maxPeaksTrunc[newLimit])							#add maxPeaks point to candidateLines
-		positions.append(newLimit)												#add to positions list
-		for i in range(newLimit,len(maxPeaks)):									#generate suitable range for testing additional peaks
-			if maxPeaksTrunc[i][0] - maxPeaksTrunc[newLimit][0] > 1.01:
+
+	#--------sort peaks by intensity
+			#use representative single point (maximum intensity for each peak) as actual mass
+	max_peaks = []											#create array of peak maxima (one point for each peak)
+	for i in range(len(peaks)):								#iterate over all peaks
+		max = [0,0]
+		for j in range(len(peaks[i])):						#iterate over accumulated points within each peak
+			if float(peaks[i][j][1]) > max[1]:
+				max = peaks[i][j]							#record maximum intensity point within each peak
+		max_peaks.append(max)								#add maximum intensity for each peak to max_peaks[]
+	max_peaksort = sorted(max_peaks, key=lambda intensity: intensity[1])
+	max_peaksort.reverse()									#sort by intensity
+	save('max_peaks.txt',path,max_peaks)					#save max_peaks data
+	#--------end sort peaks by intensity
+
+	
+	#--------check intensity-ranked peaks for isotopic distribution of ruthenium
+			#candidates generated by identifying *five* distinct ~1 amu-separated peak clusters
+			#iteratively eliminate each checked peak (and add to data set `ru_list` if applicable)
+	def check_peak(origin, new_limit, direction):				#check all available peaks within range for suitable displacement
+		for i in range(origin, new_limit, direction):
+			val = abs(max_peaks_trunc[i][0] - max_peaks_trunc[origin][0])
+			if val > .99 and val < 1.01:					#if suitably displaced, 
+				return i									#return index value of relevant point
+		return False										#return False if no relevant point is found
+	
+		#check for five appropriately-spaced peaks
+	def check_nearby_peaks(loc):								#check for cluster of five peaks around current most intense peak (from truncating list)
+		candidate_lines = [max_peaks_trunc[loc]]				#create list candidate_lines with first data point
+		positions = [loc]
+		num = loc
+		for i in range(loc, len(max_peaks_trunc)):				#determine effective range of peaks to test 
+			if max_peaks_trunc[i][0] - max_peaks_trunc[loc][0] > 1.01:	#exclude data points outside this range
 				num = i
-				break	
-		newLimit = checkPeak(newLimit,num,1)									#test new range for presence of applicable peak
-		if newLimit:															#new peak found; continue
-			candidateLines.append(maxPeaksTrunc[newLimit])						#add peak to candidateLines
-			positions.append(newLimit)											#update positions
-			for i in range(loc, 0, -1):											#check opposite direction from original (most intense) peak
-				if abs(maxPeaksTrunc[i][0] - maxPeaksTrunc[loc][0]) > 1.01:		#determine suitable testing range
+				break
+		new_limit = check_peak(loc,num,1)
+		if new_limit:											#found relevant new point
+			candidate_lines.append(max_peaks_trunc[new_limit])							#add max_peaks point to candidate_lines
+			positions.append(new_limit)													#add to positions list
+			for i in range(new_limit,len(max_peaks)):									#generate suitable range for testing additional peaks
+				if max_peaks_trunc[i][0] - max_peaks_trunc[new_limit][0] > 1.01:
 					num = i
-					break
-			newLimit = checkPeak(loc, num,-1)									#check for applicable peak in testing range
-			if newLimit:														#applicable peak found
-				candidateLines.append(maxPeaksTrunc[newLimit])					#update candidateLines
-				positions.append(newLimit)										#update positions
-				for i in range(newLimit, 0, -1):								#generate test range for 5th peak
-					if abs(maxPeaksTrunc[i][0] - maxPeaksTrunc[newLimit][0]) > 1.01:
+					break	
+			new_limit = check_peak(new_limit,num,1)									#test new range for presence of applicable peak
+			if new_limit:															#new peak found; continue
+				candidate_lines.append(max_peaks_trunc[new_limit])					#add peak to candidate_lines
+				positions.append(new_limit)											#update positions
+				for i in range(loc, 0, -1):											#check opposite direction from original (most intense) peak
+					if abs(max_peaks_trunc[i][0] - max_peaks_trunc[loc][0]) > 1.01:	#determine suitable testing range
 						num = i
 						break
-				newLimit = checkPeak(newLimit, num,-1)							#check for applicable peak within test range
-				if newLimit:													#peak found
-					candidateLines.append(maxPeaksTrunc[newLimit])				#update candidateLines
-					positions.append(newLimit)									#update positions
-					return candidateLines										#found five regularly-spaced peaks indicating possible presence of ruthenium
-	return candidateLines								#test failed (5 evenly-spaced peaks not identified); peak likely not ruthenium
+				new_limit = check_peak(loc, num,-1)									#check for applicable peak in testing range
+				if new_limit:														#applicable peak found
+					candidate_lines.append(max_peaks_trunc[new_limit])				#update candidate_lines
+					positions.append(new_limit)										#update positions
+					for i in range(new_limit, 0, -1):								#generate test range for 5th peak
+						if abs(max_peaks_trunc[i][0] - max_peaks_trunc[new_limit][0]) > 1.01:
+							num = i
+							break
+					new_limit = check_peak(new_limit, num,-1)						#check for applicable peak within test range
+					if new_limit:													#peak found
+						candidate_lines.append(max_peaks_trunc[new_limit])			#update candidate_lines
+						positions.append(new_limit)									#update positions
+						return candidate_lines										#found five regularly-spaced peaks indicating possible presence of ruthenium
+		return candidate_lines									#test failed (5 evenly-spaced peaks not identified); peak likely not ruthenium
 
-RuCount = 0												#count number of ruthenium candidates
-RuList = []
-maxPeaksTrunc = copy.copy(maxPeaks)						#new list for truncating data as it is examined
-maxPeakSortTrunc = copy.copy(maxPeakSort)				#new list for truncating line data
+	ru_count = 0												#count number of ruthenium candidates
+	ru_list = []
+	max_peaks_trunc = copy.copy(max_peaks)						#new list for truncating data as it is examined
+	max_peaksort_trunc = copy.copy(max_peaksort)				#new list for truncating line data
 
-while len(maxPeakSortTrunc) > 1:						#points remain to be analyzed
-	testPeak = maxPeakSortTrunc[0]						#select first peak (highest intensity peak)
-	checknum = maxPeaksTrunc.index(testPeak)			#find location of highest intensity peak in original maxPeaks list
-	candidateLines = checkNearbyPeaks(checknum)			#check for nearby peaks (isotopic distribution)
-	if len(candidateLines) == 5:						#equally-spaced 5-peak cluster suggestive of ruthenium
-		RuCount += 1									#increment count
-		RuList.append(candidateLines)					#record the five points
-	for i in range(len(candidateLines)):
-		maxPeakSortTrunc.pop(maxPeakSortTrunc.index(candidateLines[i]))			#truncate list by removing each candidate line
-		maxPeaksTrunc.pop(maxPeaksTrunc.index(candidateLines[i]))				#truncate list by removing each candidate line
-				
-columns = round(RuCount**0.5)							#format for figure based on number of plots	
-rows = columns + 1										#format for figure
-f1 = pl.figure(1)
-for i in range(int(rows*columns)):						#create figure containing subplots for each Ru candidate
-	if i < len(RuList):									
-		xmin = int(RuList[i][0][0]) - 12				#estimate "arbitrary" xmin value for plotting
-		for j in range(0, len(points)):					
-			if points[j][0] > xmin:						#find actual x value
-				xmin = j
-				break
-		xmax = int(RuList[i][0][0]) + 12				#estimate "arbitrary" xmax for plotting
-		for j in range(xmin, len(points)):
-			if points[j][0] > xmax:						#find actual x value
-				xmax = j
-				break
-		subplotX = []; subplotY = []					#generate each subplot x,y pair array
-		for j in range(xmin, xmax):						
-			subplotX.append(points[j][0])				#x values
-			subplotY.append(points[j][1])				#y values
-
-		pl.subplot(rows,columns,i+1).plot(subplotX, subplotY)
-		pl.subplot(rows,columns,i+1).xlabel = ''
-		pl.subplot(rows,columns,i+1).ylabel = ''
-		
-pl.tight_layout()
-figurename = 'RuCandidates'
-matplotlib.pyplot.savefig('./data_files/'+path + '/' + path + '_' + figurename + '.png')
-
-RuCandidatesHtml = """\									
-<head></head>
-<body>
-	<div id='title'>""" + path + '_' + figurename + """ </div>
+	while len(max_peaksort_trunc) > 1:						#points remain to be analyzed
+		test_peak = max_peaksort_trunc[0]					#select first peak (highest intensity peak)
+		checknum = max_peaks_trunc.index(test_peak)			#find location of highest intensity peak in original max_peaks list
+		candidate_lines = check_nearby_peaks(checknum)		#check for nearby peaks (isotopic distribution)
+		if len(candidate_lines) == 5:						#equally-spaced 5-peak cluster suggestive of ruthenium
+			ru_count += 1									#increment count
+			ru_list.append(candidate_lines)					#record the five points
+		for i in range(len(candidate_lines)):
+			max_peaksort_trunc.pop(max_peaksort_trunc.index(candidate_lines[i]))		#truncate list by removing each candidate line
+			max_peaks_trunc.pop(max_peaks_trunc.index(candidate_lines[i]))				#truncate list by removing each candidate line
 	
-	<img src='""" + path + '_' + figurename + """.png'/>
-	<style>
-		#title{
-			font-size:30px;
-		}
-		img{
-			width:100%;
-			margin:0px;
-			
-		}
-	</style>
-</body>
-"""
-open('./data_files/'+path + '/' + path + '_' + figurename+ '.html','w').write(RuCandidatesHtml)
+	
+	#--------plot format and plotting		
+	columns = round(ru_count**0.5)							#format for figure based on number of plots	
+	rows = columns + 1										#format for figure
+	f1 = pl.figure(1)
+	for i in range(int(rows*columns)):						#create figure containing subplots for each Ru candidate
+		if i < len(ru_list):									
+			xmin = int(ru_list[i][0][0]) - 12				#estimate "arbitrary" xmin value for plotting
+			for j in range(0, len(points)):					
+				if points[j][0] > xmin:						#find actual x value
+					xmin = j
+					break
+			xmax = int(ru_list[i][0][0]) + 12				#estimate "arbitrary" xmax for plotting
+			for j in range(xmin, len(points)):
+				if points[j][0] > xmax:						#find actual x value
+					xmax = j
+					break
+			subplot_x = []; subplot_y = []					#generate each subplot x,y pair array
+			for j in range(xmin, xmax):						
+				subplot_x.append(points[j][0])				#x values
+				subplot_y.append(points[j][1])				#y values
 
-#print 'File'
-#print str(len(maxPeakSort))
+			pl.subplot(rows,columns,i+1).plot(subplot_x, subplot_y)
+			pl.subplot(rows,columns,i+1).xlabel = ''
+			pl.subplot(rows,columns,i+1).ylabel = ''
+		
+	pl.tight_layout()
+	figurename = 'RuCandidates'
+	matplotlib.pyplot.savefig('./data_files/'+path + '/' + path + '_' + figurename + '.png')
+	#--------end plot format and plotting
+	
+	
+	#--------html generator (Ru candidate group visualization from matplotlib plot)
+	ru_candidates_html = """									
+	<head></head>
+	<body>
+		<div id='title'>""" + path + '_' + figurename + """ </div>
+	
+		<img src='""" + path + '_' + figurename + """.png'/>
+		<style>
+			#title{
+				font-size:30px;
+			}
+			img{
+				width:100%;
+				margin:0px;
+			}
+		</style>
+	</body>
+	"""
+	open('./data_files/'+path + '/' + path + '_' + figurename+ '.html','w').write(ru_candidates_html)
+	#--------end html generator
+	
+	save('ru_list.txt',path,ru_list)
+	print ru_list	#add processed peak data to gui
+#--------end main
 
-
-#print 'File saved... no data to print'	
-#save('maxPeaks.txt', maxPeaks)
-#print json.dumps(RuList)
-print RuList
+if __name__ == '__main__':
+	main()

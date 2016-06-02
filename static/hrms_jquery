@@ -1,8 +1,0 @@
-#!/usr/bin/env python
-def main():
-	with open('static/jquery2.1.3.js','r') as f:
-		jquery = f.read()
-	print 'Content-type: text/javascript\n'
-	print jquery
-if __name__ == '__main__':
-	main()
