@@ -1,10 +1,12 @@
 #!/usr/bin/env python
 import subprocess,sys,requests,os,time
 def start_server():
+
 	print '*** starting server ***'
 	subprocess.Popen(['python hrms_server.py &'],shell=True)						#start server
 	time.sleep(.5)
 	subprocess.Popen(['open -a firefox http://localhost:8000/hrms'],shell=True)		#open page in firefox browser; change browser preference here
+
 def main():																			#remove "-a firefox" to open in default browser
 	print;print '*** hrms starting ***'
 	proc = subprocess.Popen(['ps -fA | grep python'],stdout=subprocess.PIPE,shell=True).communicate()[0]	#check for active python processes
@@ -25,7 +27,7 @@ def main():																			#remove "-a firefox" to open in default browser
 			start_server()															#start server
 		if kill_server == 'n':														#do not kill server
 			try:
-				subprocess.Popen(['open -a firefox http://localhost:8000/hrms'],shell=True)				#try localhost
+				subprocess.Popen(['open -a http://localhost:8000/hrms'],shell=True)				#try localhost
 			except:
 				print 'hrms_server.py seems to have been spawned elsewhere. Kill process to continue.' 	#server started from elsewhere
 	else:
