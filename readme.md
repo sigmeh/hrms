@@ -4,7 +4,7 @@
 
 
 
-![hrms sample image](https://github.com/sigmeh/hrms/blob/master/media/hrms.sample.image.png)
+![hrms_sample](/media/hrms_sample.png)
 
 
 Usage:
